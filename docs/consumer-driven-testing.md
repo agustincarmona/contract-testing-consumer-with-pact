@@ -62,10 +62,10 @@ flowchart LR
 
 ## Participantes
 
-| Participante | Rol | Necesidad |
-|---|---|---|
-| `orders-api` | Proveedor | REST API con datos en memoria |
-| `checkout-service` | Consumidor | Detalle completo del pedido para cobro |
+| Participante       | Rol        | Necesidad                                          |
+| ------------------ | ---------- | -------------------------------------------------- |
+| `orders-api`       | Proveedor  | REST API con datos en memoria                      |
+| `checkout-service` | Consumidor | Detalle completo del pedido para cobro             |
 | `shipping-service` | Consumidor | Solo `id`, `status` y `shippingAddress` para envío |
 
 Endpoints del proveedor:
@@ -92,29 +92,31 @@ Cada servicio es un proyecto Node.js independiente con su propio `package.json`,
 
 ## Stack técnico
 
-| Componente | Tecnología |
-|---|---|
-| Runtime | Node.js 20+ |
-| HTTP | Express |
-| Tests | Jest + babel-jest (requerido para `@pact-foundation/pact` v16) |
-| Contratos | `@pact-foundation/pact` v16 (`PactV3`, `MatchersV3`, `Verifier`) |
-| Broker | [Pact Broker](https://github.com/pact-foundation/pact_broker) local (Docker) |
-| HTTP client | `fetch` nativo |
+| Componente  | Tecnología                                                                   |
+| ----------- | ---------------------------------------------------------------------------- |
+| Runtime     | Node.js 20+                                                                  |
+| HTTP        | Express                                                                      |
+| Tests       | Vitest + `@pact-foundation/pact` v16                                         |
+| Contratos   | `@pact-foundation/pact` v16 (`PactV3`, `MatchersV3`, `Verifier`)             |
+| Broker      | [Pact Broker](https://github.com/pact-foundation/pact_broker) local (Docker) |
+| HTTP client | `fetch` nativo                                                               |
 
-### Configuración Jest
+### Configuración Vitest
 
-Cada proyecto incluye `jest.config.js` y `babel.config.js` para compatibilidad con las dependencias ESM de Pact v16:
+Cada proyecto incluye `vitest.config.js` para ejecutar tests en Node y transformar las dependencias de Pact v16:
 
 ```js
-// jest.config.js
+// vitest.config.js
 module.exports = {
-  testEnvironment: 'node',
-  testMatch: ['**/test/**/*.test.js'],
-  testTimeout: 30000,
-  transform: { '^.+\\.(js|mjs)$': 'babel-jest' },
-  transformIgnorePatterns: [
-    'node_modules/(?!(@pact-foundation|https-proxy-agent|agent-base|axios)/)',
-  ],
+  test: {
+    environment: 'node',
+    globals: true,
+    include: ['test/**/*.test.js'],
+    testTimeout: 30000,
+    deps: {
+      inline: ['@pact-foundation/pact', 'https-proxy-agent', 'agent-base', 'axios'],
+    },
+  },
 };
 ```
 
@@ -229,8 +231,8 @@ Fuera del alcance de esta PoC:
 
 ## Riesgos y mitigaciones
 
-| Riesgo | Mitigación |
-|---|---|
-| Puertos en conflicto (3000, 9292) | Variables `PORT`; documentados en README |
+| Riesgo                                  | Mitigación                                                       |
+| --------------------------------------- | ---------------------------------------------------------------- |
+| Puertos en conflicto (3000, 9292)       | Variables `PORT`; documentados en README                         |
 | Nombres de participantes inconsistentes | Constantes: `orders-api`, `checkout-service`, `shipping-service` |
-| Provider states no implementados | Endpoint `POST /setup` desde el inicio |
+| Provider states no implementados        | Endpoint `POST /setup` desde el inicio                           |

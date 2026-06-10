@@ -11,29 +11,24 @@ Prueba de concepto de **Consumer Driven Contract Testing** con Pact: un API REST
 
 ```bash
 # 1. Levantar Pact Broker
-docker compose up -d
+npm run pact:docker:up
 
 # 2. Copiar variables de entorno
 cp .env.example .env
 # Edita .env: PACT_USE_BROKER=true para verificar contra el broker
 #                PACT_USE_BROKER=false para verificar contra pacts locales
 
-# 3. Instalar dependencias en cada proyecto
-cd checkout-service && npm install && cd ..
-cd shipping-service && npm install && cd ..
-cd orders-api && npm install && cd ..
+# 3. Instalar dependencias con workspaces
+npm i
 
 # 4. Generar y publicar contratos (consumidores)
-cd checkout-service
-npm test
-npm run pact:publish
-cd ../shipping-service
-npm test
 npm run pact:publish
 
 # 5. Verificar contratos (proveedor; usa PACT_USE_BROKER del .env)
-cd ../orders-api
-npm run test:pact
+npm run pact:test
+
+# 6. Apagar el pact broker
+npm run pact:docker:down
 ```
 
 ### Verificación local (sin broker)
@@ -41,9 +36,7 @@ npm run test:pact
 Si el broker no está disponible, pon `PACT_USE_BROKER=false` en `.env` y ejecuta:
 
 ```bash
-cd checkout-service && npm test
-cd ../shipping-service && npm test
-cd ../orders-api && npm run test:pact
+npm test
 ```
 
 Abre [http://localhost:9292](http://localhost:9292) para ver contratos y resultados de verificación en el broker (usuario/contraseña: `pact` / `pact`).
@@ -60,9 +53,9 @@ El broker local usa la imagen Docker del [Pact Broker](https://github.com/pact-f
 
 ## Participantes
 
-| Servicio | Rol | Puerto |
-|---|---|---|
-| `orders-api` | Proveedor | 3000 |
-| `checkout-service` | Consumidor | — |
-| `shipping-service` | Consumidor | — |
-| Pact Broker | Broker local | 9292 |
+| Servicio           | Rol          | Puerto |
+| ------------------ | ------------ | ------ |
+| `orders-api`       | Proveedor    | 3000   |
+| `checkout-service` | Consumidor   | —      |
+| `shipping-service` | Consumidor   | —      |
+| Pact Broker        | Broker local | 9292   |

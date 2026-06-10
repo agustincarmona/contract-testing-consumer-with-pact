@@ -1,0 +1,12 @@
+{
+  "name": "contract-testing-consumer-with-pact",
+  "workspaces": ["checkout-service", "shipping-service", "orders-api"],
+  "scripts": {
+    "test": "npm run test --workspaces",
+    "pact:docker:up": "docker-compose up -d",
+    "pact:docker:down": "docker-compose down",
+    "pact:test": "npm run pact:test --workspace orders-api",
+    "prepact:publish": "npm run pact:test --workspace checkout-service --workspace shipping-service",
+    "pact:publish": "npm run pact:publish --workspace checkout-service --workspace shipping-service"
+  }
+}

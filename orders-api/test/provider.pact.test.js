@@ -53,14 +53,18 @@ function buildVerifierOptions() {
 describe('Orders API Provider Verification', () => {
   let server;
 
-  beforeAll((done) => {
+  beforeAll(async () => {
     store.reset();
     store.seedOrder();
-    server = createApp().listen(PORT, done);
+    await new Promise((resolve, reject) => {
+      server = createApp().listen(PORT, (err) => (err ? reject(err) : resolve()));
+    });
   });
 
-  afterAll((done) => {
-    server.close(done);
+  afterAll(async () => {
+    await new Promise((resolve, reject) => {
+      server.close((err) => (err ? reject(err) : resolve()));
+    });
   });
 
   it('validates contracts from all consumers', () =>

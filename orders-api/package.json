@@ -5,8 +5,8 @@
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",
-    "test": "jest",
-    "test:pact": "jest test/provider.pact.test.js"
+    "test": "vitest run",
+    "pact:test": "vitest run --project=pact"
   },
   "dependencies": {
     "express": "^4.21.2"
@@ -14,8 +14,7 @@
   "devDependencies": {
     "@babel/preset-env": "^7.26.9",
     "@pact-foundation/pact": "^16.0.4",
-    "babel-jest": "^29.7.0",
     "dotenv": "^16.6.1",
-    "jest": "^29.7.0"
+    "vitest": "^4.1.8"
   }
 }
