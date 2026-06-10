@@ -4,6 +4,7 @@
   "description": "Checkout consumer for Pact PoC",
   "main": "src/ordersClient.js",
   "scripts": {
+    "test": "vitest run",
     "pact:test": "vitest run --project=pact",
     "pact:publish": "pact-broker publish ./pacts --consumer-app-version=$npm_package_version --broker-base-url=${PACT_BROKER_BASE_URL:-http://localhost:9292} --broker-username=${PACT_BROKER_USERNAME:-pact} --broker-password=${PACT_BROKER_PASSWORD:-pact}"
   },
